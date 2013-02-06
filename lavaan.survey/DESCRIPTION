@@ -1,0 +1,18 @@
+Package: lavaan.survey
+Type: Package
+Title: Complex survey structural equation modeling (SEM)
+Version: 0.6
+Date: 2012-10-25
+Author: Daniel Oberski
+Maintainer: Daniel Oberski <daniel.oberski@gmail.com>
+Description: Fit structural equation models (SEM) including factor analysis,
+    multivariate regression models with latent variables and many other latent
+    variable models while correcting estimates, standard errors, and
+    chi-square-derived fit measures for a complex sampling design. 
+    Incorporate clustering, stratification, sampling weights, and 
+    finite population corrections into a SEM analysis.
+    Wrapper around packages lavaan and survey.
+Depends: lavaan, survey, Matrix
+License: GPL (>=2)
+URL: http://lavaan.org
+
