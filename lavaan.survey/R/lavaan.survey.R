@@ -1,11 +1,15 @@
+# Complex sampling analysis of SEM models
+# Daniel Oberski, 2012-02-06
 
 lavaan.survey <- 
   function(lavaan.fit, survey.design, 
            estimator=c("MLM", "MLMV", "MLMVS", "WLS", "DWLS", "ML"),
            estimator.gamma=c("default","Yuan-Bentler")) {
-
-  estimator <- match.arg(estimator)
-  estimator.gamma <- match.arg(estimator.gamma)
+  
+  # Not all estimators in lavaan make sense to use here, therefore matching args
+  estimator <- match.arg(estimator)  
+  estimator.gamma <- match.arg(estimator.gamma) # Smoothing Gamma or not
+  
   # Names of the observed variables (same for each group)
   ov.names <- lavaan.fit@Data@ov.names[[1]]
   # The MP-inverse duplication matrix is handy for removing redundancy
@@ -93,7 +97,7 @@ lavaan.survey <-
       # set stats with multiple imputation point and variance estimates
       stats <- list(Gamma.g=Gamma.g, sample.cov.g=sample.cov.g, sample.mean.g=sample.mean.g)
     }
-    
+
     # Augment the list for this group
     Gamma[[g]] <- stats$Gamma.g
     sample.cov[[g]] <- stats$sample.cov.g
@@ -115,6 +119,7 @@ lavaan.survey <-
     # Weighted Least Squares, adjust the weight matrix: MP inverse of Gamma
     # Note that Gamma may be singular.
     new.call$WLS.V <- lapply(Gamma, ginv)
+    new.call$sample.cov.rescale <- FALSE # circumvent bug in lavaan 0.5.11-12
   }
   new.fit <- eval(new.call) # Run lavaan with the new arguments
   
@@ -141,7 +146,7 @@ lavaan.survey <-
       warning(strwrap(long.string, width=9999, simplify=TRUE))#gotta love it
     }
   }
-  
+
   new.fit
 }
 
