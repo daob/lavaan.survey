@@ -1,5 +1,5 @@
 # Complex sampling analysis of SEM models
-# Daniel Oberski, 2012-02-06
+# Daniel Oberski, 2013-09-25
 
 lavaan.survey <- 
   function(lavaan.fit, survey.design, 
@@ -7,15 +7,17 @@ lavaan.survey <-
            estimator.gamma=c("default","Yuan-Bentler")) {
   
   # Not all estimators in lavaan make sense to use here, therefore matching args
-  estimator <- match.arg(estimator)  
+  estimator <- match.arg(estimator) 
+  if(estimator=="ML") warning("Estimator 'ML' will not correct standard errors and chi-square statistic.")
   estimator.gamma <- match.arg(estimator.gamma) # Smoothing Gamma or not
   
   # Names of the observed variables (same for each group)
-  ov.names <- lavaan.fit@Data@ov.names[[1]]
+  ov.names <- lavaanNames(lavaan.fit, type="ov", group=1)
+  
   # The MP-inverse duplication matrix is handy for removing redundancy
   Dplus <- ginv(lavaan::duplicationMatrix(length(ov.names)))
   # Create a formula that includes all observed variables for svymean
-  ov.formula <- as.formula(paste("~",paste(ov.names, collapse="+")))
+  ov.formula <- as.formula(paste("~", paste(ov.names, collapse="+")))
   
   # <no. group>-sized lists that will contain the asy. covariance matrix,
   #  and sample covariance matrix and mean vector
@@ -119,7 +121,6 @@ lavaan.survey <-
     # Weighted Least Squares, adjust the weight matrix: MP inverse of Gamma
     # Note that Gamma may be singular.
     new.call$WLS.V <- lapply(Gamma, ginv)
-    new.call$sample.cov.rescale <- FALSE # circumvent bug in lavaan 0.5.11-12
   }
   new.fit <- eval(new.call) # Run lavaan with the new arguments
   
@@ -161,8 +162,38 @@ get.residuals <- function(fit) {
 # In case sample size differs over imputations, takes median over imputations.
 # TODO: Does not work with multiple group yet.
 get.sample.nobs  <- function(svy.imp.design, group=NULL) {
-  if(is.null(group)) {
-    nobs.imp <- lapply(svy.imp.design[[1]], function(des) {nrow(des$variables)})
-    return(median(unlist(nobs.imp)))
+  nobs.imp <- lapply(svy.imp.design[[1]], function(des) {nrow(des$variables)})
+  return(median(unlist(nobs.imp)))
+}
+
+# Use the pFsum function from the survey package to obtain p value for the 
+#   overall model fit using an F reference distribution where the 
+#   denominator degrees of freedom is the design degrees of freedom.  
+# An anonymous reviewer for J Stat Software suggested that 
+#  "in surveys with small numbers of primary sampling units this sort of 
+#   correction has often improved the 
+#   behavior of tests in other contexts."
+# The eigenvalues of the U.Gamma matrix will be the coefficients in the 
+#   mixture of F's distribution (Skinner, Holt & Smith, pp. 86-87).
+pval.pFsum <- function(lavaan.fit, survey.design, method = "saddlepoint") {
+  # Check that Satorra-Bentler or Satterthwaite adjustment is present
+  if(!lavaan.fit@Options$test %in% 
+              c("satorra.bentler", "mean.var.adjusted", "Satterthwaite")) {
+    stop("Please refit the model with Satorra-Bentler (MLM) or Satterthwaite (MLMVS) adjustment.") 
   }
+  test <- lavaan.fit@Fit@test
+  if("UGamma.eigenvalues" %in% names(test[[2]])) {
+    real.eigen.values <- test[[2]]$UGamma.eigenvalues
+    return(survey::pFsum(x=test[[1]]$stat, df=rep(1, length(real.eigen.values)), 
+                  a=real.eigen.values, ddf=degf(survey.design), lower.tail=FALSE,
+                  method=method))
+  } 
+  warning("U Gamma eigenvalues not available from this version of lavaan, defaulting to Satterthwaite method.")
+  if(!lavaan.fit@Options$test %in% c("mean.var.adjusted", "Satterthwaite")) {
+    # (Needed in case eigenvalues are not available)
+    stop("Please refit the model with Satterthwaite (MLMVS) adjustment.") 
+  }
+  # Eigenvalues of U%*%Gamma only available in dev version of lavaan, 
+  #     if n/a use Satterthwaite adjustments (same as method="Satterthwaite"):
+  pf(test[[2]]$stat / test[[2]]$df, df1=test[[2]]$df, df2=degf(survey.design), lower.tail=FALSE)
 }

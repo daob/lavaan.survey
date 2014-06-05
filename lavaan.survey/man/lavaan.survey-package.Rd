@@ -18,7 +18,7 @@
 Package: \tab lavaan.survey\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
-Date: \tab 2012-10-25\cr
+Date: \tab 2013-11-06\cr
 License: \tab GPL(>=2)\cr
 }
 
@@ -27,26 +27,42 @@ License: \tab GPL(>=2)\cr
     Author/maintainer: Daniel Oberski <daniel.oberski@gmail.com>
 }
 \references{
-	Oberski, D. and Saris, W. (2012). A model-based procedure to evaluate
+  Bollen, K, Tueller, S, Oberski, DL (2013). Issues in the Structural Equation 
+    Modeling of Complex Survey Data. In: Proceedings of the 59th World Statistics 
+    Congress 2013 (International Statistical Institute, ed.), Hong Kong.
+    \url{http://daob.nl/publications/}
+
+  Oberski, D.L. (2014). lavaan.survey: An R Package for Complex Survey Analysis
+    of Structural Equation Models. Journal of Statistical Software, 57(1), 1-27.
+    \url{http://www.jstatsoft.org/v57/i01/}.
+
+	Oberski, DL and Saris, WE (2012). A model-based procedure to evaluate
 	    the relative effects of different TSE components on structural equation
 	    model parameter estimates. Presentation given at the International
 	    Total Survey Error Workshop in Santpoort, the Netherlands. 
-	    \url{http://daob.org/}
+	    \url{http://daob.nl/publications/}
 
-	Satorra, A., & Bentler, P. M. (1994). Corrections to test statistics
+	Satorra, A, & Bentler, PM (1994). Corrections to test statistics
 		and standard errors in covariance structure analysis. 
 
-	Satorra, A., and Muthen, B. (1995). Complex sample data in structural
+	Satorra, A, and Muthen, BO (1995). Complex sample data in structural
 	   equation modeling. Sociological methodology, 25, 267-316.
 }
 \keyword{ package }
 \seealso{
     \code{\link{lavaan.survey}}
     
-    \code{\link{svydesign}}
-    \code{\link{svyvar}}
+  \code{\link{pval.pFsum}}
 
-    \code{\link{lavaan}}
+  \code{\link{cardinale}}
+  \code{\link{ess.dk}}
+  \code{\link{ess4.gb}}
+  \code{\link{liss}}
+  \code{\link{pisa.be.2003}}
+
+  \code{\link{svydesign}}
+
+  \code{\link{lavaan}}
     \code{\link{cfa}}
     \code{\link{sem}}
 }

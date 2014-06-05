@@ -1,1 +1,13 @@
+importFrom("MASS", ginv)
+importFrom("survey",
+            svyvar,
+            svymean, 
+            pFsum)
+importFrom("lavaan",
+            lavaanNames,
+            vech,
+            duplicationMatrix)
+importFrom("Matrix", bdiag)
+
 export("lavaan.survey")
+export("pval.pFsum")

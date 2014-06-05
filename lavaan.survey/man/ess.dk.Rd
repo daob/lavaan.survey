@@ -30,6 +30,10 @@ This dataset was retrieved from \url{http://ess.nsd.uib.no/ess/round4/} and conv
 \references{
 	Jowell, R., Roberts, C., Fitzgerald, R., & Eva, G. (2007). 
 		Measuring attitudes cross-nationally: Lessons from the european social survey. SAGE.
+    
+  Oberski, D.L. (2014). lavaan.survey: An R Package for Complex Survey Analysis
+    of Structural Equation Models. Journal of Statistical Software, 57(1), 1-27.
+    \url{http://www.jstatsoft.org/v57/i01/}.
 }
 \seealso{
 \code{\link{lavaan.survey}}
@@ -37,4 +41,22 @@ This dataset was retrieved from \url{http://ess.nsd.uib.no/ess/round4/} and conv
 \examples{
 data(ess.dk)
 head(ess.dk)
+
+# A saturated model with reciprocal effects from Saris & Gallhofer (2007)
+dk.model <- "
+  socialTrust ~ 1 + systemTrust + fearCrime
+  systemTrust ~ 1 + socialTrust + efficacy
+  socialTrust ~~ systemTrust
+"
+lavaan.fit <- lavaan(dk.model, data=ess.dk, auto.var=TRUE, estimator="MLM")
+summary(lavaan.fit)
+
+# Create a survey design object with interviewer clustering
+survey.design <- svydesign(ids=~intnum, prob=~1, data=ess.dk)
+
+survey.fit <- lavaan.survey(lavaan.fit=lavaan.fit, survey.design=survey.design)
+summary(survey.fit)
+}
+\author{
+  Daniel Oberski - \url{http://daob.org} - \email{daniel.oberski@gmail.com}
 }

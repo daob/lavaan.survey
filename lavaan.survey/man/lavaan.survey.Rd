@@ -103,38 +103,50 @@ lavaan.survey(lavaan.fit, survey.design,
 	design. Several methods are available for \code{\linkS4class{lavaan}} 
 	objects, including a \code{summary} method.}
 \references{
-  Asparouhov T (2005). Sampling Weights in Latent Variable Modeling. Structural 
-    equation modeling, 12(3), 411–434.
+Asparouhov T (2005). Sampling Weights in Latent Variable Modeling. Structural 
+  Equation Modeling, 12(3), 411-434.
 
-  Fuller WA (2009). Sampling Statistics. John Wiley & Sons, New York.
+Bollen, K, Tueller, S, Oberski, DL (2013). Issues in the Structural Equation 
+  Modeling of Complex Survey Data. In: Proceedings of the 59th World Statistics 
+  Congress 2013 (International Statistical Institute, ed.), Hong Kong.
+  \url{http://daob.nl/publications/}
 
-  Kim J, Brick J, Fuller WA, Kalton G (2006). On the Bias of the Multiple-Imputation Variance Estimator in Survey Sampling. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 68(3), 509–521.
+Fuller WA (2009). Sampling Statistics. John Wiley & Sons, New York.
 
-	Oberski, D. and Saris, W. (2012). A model-based procedure to evaluate
-	    the relative effects of different TSE components on structural equation
-	    model parameter estimates. Presentation given at the International
-	    Total Survey Error Workshop in Santpoort, the Netherlands. 
-	    \url{http://daob.org/}
+Kim J, Brick J, Fuller WA, Kalton G (2006). On the Bias of the Multiple-Imputation 
+  Variance Estimator in Survey Sampling. Journal of the Royal Statistical Society: 
+  Series B (Statistical Methodology), 68(3), 509-521.
 
-	Satorra, A., & Bentler, P. M. (1994). Corrections to test statistics
-		and standard errors in covariance structure analysis. 
+Oberski, D.L. (2014). lavaan.survey: An R Package for Complex Survey Analysis
+  of Structural Equation Models. Journal of Statistical Software, 57(1), 1-27.
+  \url{http://www.jstatsoft.org/v57/i01/}.
 
-	Satorra, A., and Muthen, B. (1995). Complex sample data in structural
-	   equation modeling. Sociological methodology, 25, 267-316.
-  
-  Skinner C, Holt D, Smith T (1989). Analysis of Complex Surveys. John Wiley & Sons,     
-      New York.
-  
-  Stapleton L (2006). An Assessment of Practical Solutions for Structural Equation Modeling with Complex Sample Data. Structural Equation Modeling, 13(1), 28–58.
-  
-  Stapleton L (2008). Variance Estimation Using Replication Methods in Structural 
-    Equation Modeling with Complex Sample Data. Structural Equation Modeling, 15(2), 183–210.
-  
-  Yuan K, Bentler P (1998). Normal Theory Based Test Statistics in Structural Equation
-    Modelling. British Journal of Mathematical and Statistical Psychology, 51(2), 289–309.
+Oberski, D. and Saris, W. (2012). A model-based procedure to evaluate
+    the relative effects of different TSE components on structural equation
+    model parameter estimates. Presentation given at the International
+    Total Survey Error Workshop in Santpoort, the Netherlands. 
+    \url{http://daob.nl/publications/}
+
+Satorra, A., & Bentler, P. M. (1994). Corrections to test statistics
+	and standard errors in covariance structure analysis. 
+
+Satorra, A., and Muthen, B. (1995). Complex sample data in structural
+   equation modeling. Sociological methodology, 25, 267-316.
+
+Skinner C, Holt D, Smith T (1989). Analysis of Complex Surveys. 
+  John Wiley & Sons, New York.
+
+Stapleton L (2006). An Assessment of Practical Solutions for Structural Equation 
+  Modeling with Complex Sample Data. Structural Equation Modeling, 13(1), 28-58.
+
+Stapleton L (2008). Variance Estimation Using Replication Methods in Structural 
+  Equation Modeling with Complex Sample Data. Structural Equation Modeling, 15(2), 183-210.
+
+Yuan K, Bentler P (1998). Normal Theory Based Test Statistics in Structural Equation
+  Modelling. British Journal of Mathematical and Statistical Psychology, 51(2), 289-309.  
 }
 \author{
-	Daniel Oberski - \url{http://daob.org} - \email{daniel.oberski@gmail.com}
+	Daniel Oberski - \url{http://daob.nl/} - \email{daniel.oberski@gmail.com}
 }
 \note{    
     1) Some care should be taken when applying multiple imputation with survey
@@ -160,9 +172,16 @@ lavaan.survey(lavaan.fit, survey.design,
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-	\code{\link{svydesign}}
-	\code{\link{svyvar}}
-	\code{\link{lavaan}}
+  \code{\link{pval.pFsum}}
+
+  \code{\link{cardinale}}
+  \code{\link{ess.dk}}
+  \code{\link{ess4.gb}}
+  \code{\link{liss}}
+  \code{\link{pisa.be.2003}}
+
+  \code{\link{svydesign}}
+  \code{\link{lavaan}}
 }
 \examples{
 ###### A single group example #######
@@ -200,6 +219,7 @@ HS.model <- ' visual  =~ x1 + x2 + c(lam31, lam31)*x3
 
 # Fit multiple group per school
 fit <- lavaan(HS.model, data=HolzingerSwineford1939,
+              int.ov.free=TRUE, meanstructure=TRUE,
               auto.var=TRUE, auto.fix.first=TRUE, group="school",
               auto.cov.lv.x=TRUE, estimator="MLM")
 summary(fit, fit.measures=TRUE)
@@ -211,6 +231,10 @@ survey.design <- svydesign(ids=~clus, prob=~1, data=HolzingerSwineford1939)
 
 summary(fit.survey <- lavaan.survey(fit, survey.design))
 
+
+# For more examples, please see the Journal of Statistical Software Paper, 
+#  the accompanying datasets ?cardinale ?ess4.gb ?liss ?pisa.be.2003
+#  and my homepage http://daob.nl/ 
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
