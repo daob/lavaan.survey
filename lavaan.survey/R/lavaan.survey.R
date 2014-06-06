@@ -24,6 +24,7 @@ lavaan.survey <-
   Gamma <- vector("list", lavaan.fit@Data@ngroups)
   sample.cov <- vector("list", lavaan.fit@Data@ngroups)
   sample.mean <- vector("list", lavaan.fit@Data@ngroups)
+  sample.nobs <- vector("list", lavaan.fit@Data@ngroups)
   
   for(g in seq(lavaan.fit@Data@ngroups)) {
     if(lavaan.fit@Data@ngroups > 1) {
@@ -38,7 +39,7 @@ lavaan.survey <-
     }
     
     # Function that takes survey design and returns the Gamma & observed moments
-    get.stats.design <- function(survey.design.g, sample.nobs) {
+    get.stats.design <- function(survey.design.g, sample.nobs.g) {
       sample.cov.g <- as.matrix(svyvar(ov.formula, design=survey.design.g, na.rm=TRUE))  
       # survey package returns the variance matrix of the (co)variances as attr:
       Gamma.cov.g <- attr(sample.cov.g, "var")
@@ -53,13 +54,13 @@ lavaan.survey <-
       # TODO add offdiag
       Gamma.g <- as.matrix(Matrix::bdiag(Gamma.mean.g, Gamma.cov.g))
       
-      Gamma.g <- Gamma.g * sample.nobs[g] # lavaan wants nobs * Gamma.
+      Gamma.g <- Gamma.g * sample.nobs.g # lavaan wants nobs * Gamma.
       
       # Since the above nonparametric estimate of Gamma can be unstable, Yuan
       # and Bentler suggested a model-smoothed estimate of it, optional here:
       if(estimator.gamma == "Yuan-Bentler") {
         r <- get.residuals(lavaan.fit) # Iff these asy = 0, all will be well...
-        Gamma.g <- Gamma.g + (sample.nobs[g]/(sample.nobs[g] - 1)) * (r %*% t(r))
+        Gamma.g <- Gamma.g + (sample.nobs.g/(sample.nobs.g - 1)) * (r %*% t(r))
       }
       # Get rid of attribute, preventing errors caused by lazy evaluation
       # (This has to be at the end or lazy evaluation mayhem will ensue)
@@ -73,14 +74,16 @@ lavaan.survey <-
     # The data may be a list of multiply imputed datasets
     if(!any(class(survey.design.g) == "svyimputationList")) {
       # If no imputations, just use usual no. observations and asy variance
-      sample.nobs <- unlist(lavaan.fit@Data@nobs)
-      stats <- get.stats.design(survey.design.g, sample.nobs)
+      sample.nobs.g <- lavaan.fit@Data@nobs[[g]] 
+      stats <- get.stats.design(survey.design.g, sample.nobs.g)
     } 
     else { # In case of multiply imputed data
       # Not only can nobs differ from lavaan.fit, but also per imputation
-      sample.nobs <- get.sample.nobs(survey.design.g, lavaan.fit@call$group)
-      # Retrieve point and variance estimates per imputation
-      stats.list <- lapply(survey.design.g[[1]], get.stats.design, sample.nobs=sample.nobs)
+      sample.nobs.g <- get.sample.nobs(survey.design.g, lavaan.fit@call$group)
+      
+      # Retrieve point and variance estimates per imputation, 
+      #    [TODO: this line will not be correct when nobs differs over imputations]
+      stats.list <- lapply(survey.design.g[[1]], get.stats.design, sample.nobs=sample.nobs.g)
       m  <- length(stats.list) # no. imputation
       
       # Point estimates are average over imputations
@@ -104,6 +107,7 @@ lavaan.survey <-
     Gamma[[g]] <- stats$Gamma.g
     sample.cov[[g]] <- stats$sample.cov.g
     sample.mean[[g]] <- stats$sample.mean.g
+    sample.nobs[[g]] <- sample.nobs.g
   } # End of loop over groups
 
   new.call <- lavaan.fit@call
