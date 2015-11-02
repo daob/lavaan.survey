@@ -1,5 +1,5 @@
 # Complex sampling analysis of SEM models
-# Daniel Oberski, 2013-09-25
+# Daniel Oberski, 2015-10-31
 
 lavaan.survey <- 
   function(lavaan.fit, survey.design, 
@@ -15,7 +15,7 @@ lavaan.survey <-
   ov.names <- lavaanNames(lavaan.fit, type="ov", group=1)
   
   # The MP-inverse duplication matrix is handy for removing redundancy
-  Dplus <- ginv(lavaan::duplicationMatrix(length(ov.names)))
+  Dplus <- ginv(lavaan::lav_matrix_duplication(length(ov.names)))
   # Create a formula that includes all observed variables for svymean
   ov.formula <- as.formula(paste("~", paste(ov.names, collapse="+")))
   
@@ -189,7 +189,7 @@ pval.pFsum <- function(lavaan.fit, survey.design, method = "saddlepoint") {
   if("UGamma.eigenvalues" %in% names(test[[2]])) {
     real.eigen.values <- test[[2]]$UGamma.eigenvalues
     return(survey::pFsum(x=test[[1]]$stat, df=rep(1, length(real.eigen.values)), 
-                  a=real.eigen.values, ddf=degf(survey.design), lower.tail=FALSE,
+                  a=real.eigen.values, ddf=survey::degf(survey.design), lower.tail=FALSE,
                   method=method))
   } 
   warning("U Gamma eigenvalues not available from this version of lavaan, defaulting to Satterthwaite method.")

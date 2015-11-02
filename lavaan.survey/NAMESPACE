@@ -2,11 +2,12 @@ importFrom("MASS", ginv)
 importFrom("survey",
             svyvar,
             svymean, 
+            degf,
             pFsum)
 importFrom("lavaan",
             lavaanNames,
             vech,
-            duplicationMatrix)
+            lav_matrix_duplication)
 importFrom("Matrix", bdiag)
 
 export("lavaan.survey")
