@@ -2,3 +2,10 @@
 .Rproj.user
 .Rhistory
 .RData
+*.swp
+lavaan.survey.Rcheck/*
+*.log
+Rene-Mayer/*
+*.Rproj
+*.bak
+*.gz

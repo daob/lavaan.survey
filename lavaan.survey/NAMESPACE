@@ -6,8 +6,11 @@ importFrom("survey",
             pFsum)
 importFrom("lavaan",
             lavaanNames,
-            vech,
-            lav_matrix_duplication)
+            lav_matrix_vech,
+            lav_matrix_duplication,
+            lavInspect, 
+            lavTech,
+            fitMeasures)
 importFrom("Matrix", bdiag)
 
 export("lavaan.survey")
