@@ -13,7 +13,7 @@ Description: Fit structural equation models (SEM) including factor analysis,
     finite population corrections into a SEM analysis.
     Wrapper around packages lavaan and survey.
 Depends: R(>= 2.14.0), lavaan(>= 0.5-20.901), survey(>= 3.30-3)
-Imports: MASS, Matrix
+Imports: MASS
 License: GPL (>=2)
 URL: http://daob.nl/
 Suggests: testthat, mice, mitools

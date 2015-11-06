@@ -15,7 +15,7 @@ lavaan.survey <-
   ov.names <- lavaanNames(lavaan.fit, type="ov", group=1)
   
   # The MP-inverse duplication matrix is handy for removing redundancy
-  Dplus <- ginv(lavaan::lav_matrix_duplication(length(ov.names)))
+  Dplus <- lavaan::lav_matrix_duplication_ginv( length(ov.names) )
   # Create a formula that includes all observed variables for svymean
   ov.formula <- as.formula(paste("~", paste(ov.names, collapse="+")))
   
@@ -54,7 +54,7 @@ lavaan.survey <-
       
       # Join asy. variance matrices for means and covariances
       # TODO add offdiag
-      Gamma.g <- as.matrix(Matrix::bdiag(Gamma.mean.g, Gamma.cov.g))
+      Gamma.g <- lavaan::lav_matrix_bdiag(Gamma.mean.g, Gamma.cov.g)
       
       Gamma.g <- Gamma.g * sample.nobs.g # lavaan wants nobs * Gamma.
       
@@ -76,7 +76,8 @@ lavaan.survey <-
     # The data may be a list of multiply imputed datasets
     if(!any(class(survey.design.g) == "svyimputationList")) {
       # If no imputations, just use usual no. observations and asy variance
-      sample.nobs.g <- lapply(lavTech(lavaan.fit, "case.idx"), length)[[g]] 
+      sample.nobs.g <- lavInspect(lavaan.fit, "nobs")[[g]] 
+
       stats <- get.stats.design(survey.design.g, sample.nobs.g)
     } 
     else { # In case of multiply imputed data
@@ -136,11 +137,11 @@ lavaan.survey <-
   # created dependencies in the parameter estimates.
   # (Code below should really be implemented in lavaan...)
   evs.too.small <- sapply(Gamma, function(Gamma.g) {
-    any(eigen(Gamma.g, only.values=TRUE)$values < .Machine$double.eps*10)
+    any(eigen(Gamma.g, only.values=TRUE)$values < (.Machine$double.eps*100))
   })
   if(any(evs.too.small)) {
     V.est <- vcov(new.fit)
-    if(any(eigen(V.est, only.values=TRUE)$values < (.Machine$double.eps*10))) {
+    if(any(Re(eigen(V.est, only.values=TRUE)$values) < (.Machine$double.eps*100))) {
       long.string  <- sprintf("Some of the standard errors may not be trustworthy.
         Some of the observed covariances or means are
         collinear, and this has generated collinearity in your
