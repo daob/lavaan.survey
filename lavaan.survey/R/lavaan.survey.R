@@ -140,7 +140,7 @@ lavaan.survey <-
     any(eigen(Gamma.g, only.values=TRUE)$values < (.Machine$double.eps*100))
   })
   if(any(evs.too.small)) {
-    V.est <- vcov(new.fit)
+    V.est <- lavaan::vcov(new.fit)
     if(any(Re(eigen(V.est, only.values=TRUE)$values) < (.Machine$double.eps*100))) {
       long.string  <- sprintf("Some of the standard errors may not be trustworthy.
         Some of the observed covariances or means are
@@ -161,7 +161,7 @@ lavaan.survey <-
 # Obtain residuals from a lavaan fit object, concatenating means w/ covariances
 # (used in Yuan-Bentler correction)
 get.residuals <- function(fit) {
-    r  <- residuals(fit)
+    r  <- lavaan::residuals(fit)
     c(r$mean, lavaan::lav_matrix_vech(r$cov))
 }
 

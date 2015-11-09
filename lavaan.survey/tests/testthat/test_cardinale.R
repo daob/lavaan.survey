@@ -35,6 +35,8 @@ test_that("scaled chi sq matches (MLMVS)", {
 })
 
 test_that("F test matches", {
+  skip_on_cran() # May not have CompQuadForm
+  
   expect_equal(pval.pFsum(fit.card.survey, survey.design = des.card), 0.609748, tolerance = 1e-5, check.attributes = FALSE)
   expect_equal(pval.pFsum(fit.card.survey, survey.design = des.card, method="integration"), 0.6231761, tolerance = 1e-5, check.attributes = FALSE)
   expect_equal(pval.pFsum(fit.card.survey, survey.design = des.card, method="satterthwaite")[1], 0.6079676, tolerance = 1e-5, check.attributes = FALSE)

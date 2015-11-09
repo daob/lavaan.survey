@@ -9,3 +9,17 @@ Rene-Mayer/*
 *.Rproj
 *.bak
 *.gz
+
+muthen-example.R
+
+croon_wide.dat
+
+dk.example.multigroup.R
+
+dk.example.R
+
+lavaan.survey.R-bak
+
+lavaan.survey.regression.R
+
+ReadMe.txt

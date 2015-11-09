@@ -12,6 +12,9 @@ importFrom("lavaan",
             lavInspect, 
             lavTech,
             fitMeasures)
-
+importFrom("stats", 
+           as.formula,
+           cov, 
+           median)
 export("lavaan.survey")
 export("pval.pFsum")
