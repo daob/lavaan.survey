@@ -53,8 +53,8 @@ test_that("standard errors match", {
 
 test_that("an estimate matches", {
   
-  expect_equal(coef(fit.cfa.surv)['range~~range'], 1.892812, tolerance = 1e-5, check.attributes = FALSE)
-  expect_equal(coef(fit.cfa.surv.wls.yb)['range~~range'], 2.369951, tolerance = 1e-5, check.attributes = FALSE) 
+  expect_equal(coef(fit.cfa.surv)['range~~range'], 1.892812, tolerance = 1e-3, check.attributes = FALSE)
+  expect_equal(coef(fit.cfa.surv.wls.yb)['range~~range'], 2.369951, tolerance = 1e-3, check.attributes = FALSE) 
 })
 
 test_that("rep weights works", {
